@@ -170,22 +170,22 @@ void startgame(string &row1, string &row2, string &row3, string &row4, string &r
     }
 }
 void errorcodes(float errorcode) {
-    if (errorcode == '0') {
+    if (errorcode == 0) {
         return;
     }
-    if (errorcode == '1') {
+    if (errorcode == 1) {
         cout << "Invalid coordinates\n";
     }
-    if (errorcode == '2') {
+    if (errorcode == 2) {
         cout << "Invalid input length(input: 1 letter, 1 number)\n";
     }
-    if (errorcode == '3') {
+    if (errorcode == 3) {
         cout << "The space is already occupied\n";
     }
-    if (errorcode == '4') {
+    if (errorcode == 4) {
         cout << "no action selected or invalid action";
     }
-    if (errorcode == '5') {
+    if (errorcode == 5) {
         
     }
 }
@@ -207,7 +207,7 @@ void getplayerinput(bool &validinput, int playerturn, float errorcode, string &r
     cin >> playerinput;
 
     // check if player input can be processed
-    if (playerinput.length() > 2) {
+    if (playerinput.length() > 2 || playerinput.length() < 2) {
         validinput = false;
         errorcode = 2;
         return;        
@@ -215,82 +215,75 @@ void getplayerinput(bool &validinput, int playerturn, float errorcode, string &r
 
     // store coordinates 
     // column
-    if (playerinput[0] == 'a') {
+    if (playerinput[0] = 'a') {
         col = 1;
     }
-    if (playerinput[0] == 'b') {
+    if (playerinput[0] = 'b') {
         col = 2;
     }
-    if (playerinput[0] == 'c') {
+    if (playerinput[0] = 'c') {
         col = 3;
     }
-    if (playerinput[0] == 'd') {
+    if (playerinput[0] = 'd') {
         col = 4;
     }
-    if (playerinput[0] == 'e') {
+    if (playerinput[0] = 'e') {
         col = 5;
     }
     // row
     row = playerinput[1];
 
+    cout << " \n "<< col << " yes\n\n" << endl;
+
     // check for invalid values
-    if (playerinput[0] != 'a', 'b', 'c', 'd', 'e') {
-        validinput = false;
-        errorcode = 1;
-        return;
-    }
-    if (playerinput[1] != 1, 2, 3, 4, 5) {
+    if (col > 5 || col < 1) {
         validinput = false;
         errorcode = 1;
         return;
     }
 
+    cout << playerinput[0];
+    if (row > 5 || row < 1) {
+        validinput = false;
+        errorcode = 1;
+        return;
+    }
+
+    cout << "valid";
+
     // store the values in the correct slot
-    if (row = 1) {
-        if (row1[col] == '0') {
+    if (row == 1) {
+        if (row1[col] == 0) {
             row1[col] = 1;
         }
-        else {
-            errorcode = 3;
-            return;
-        }
     }
-    if (row = 2) {
-        if (row1[col] == '0') {
+    if (row == 2) {
+        if (row1[col] == 0) {
             row1[col] = 1;
         }
-        else {
-            errorcode = 3;
-            return;
-        }
     }
-    if (row = 3) {
-        if (row2[col] == '0') {
+    if (row == 3) {
+        if (row2[col] == 0) {
             row2[col] = 1;
         }
-        else {
-            errorcode = 3;
-            return;
-        }
     }
-    if (row = 4) {
-        if (row3[col] == '0') {
+    if (row == 4) {
+        if (row3[col] == 0) {
             row3[col] = 1;
         }
-        else {
-            errorcode = 3;
-            return;
-        }
     }
-    if (row = 5) {
-        if (row4[col] == '0') {
+    if (row == 5) {
+        if (row4[col] == 0) {
             row4[col] = 1;
         }
-        else {
-            errorcode = 3;
-            return;
-        }
     }
+    else {
+        errorcode = 3;
+        return;
+    }
+
+    // tell the user that the coordinates have been successfully inserted
+    cout << "input recieved\n\n\n\n";
 
 }
 
@@ -373,19 +366,20 @@ int main() {
     while (gamestatus != 3) {
         
         // game ongoing funcion
-        if (gamestatus = '0') {
+        if (gamestatus == 0) {
             header();
             displayboard(row1, row2, row3, row4, row5);
-            cout << errorcode;
-            cout << linesep;
+            //cout << linesep;
             errorcodes(errorcode);
             getplayerinput(validinput, playerturn, errorcode, row1, row2, row3, row4, row5);
+            //continue;
+            cin.ignore();
         }
         // option 1 display menu or start the game
-        if (gamestatus = '1') {
+        if (gamestatus == 1) {
             menu();
             cin >> gamestatus;
-            if (gamestatus = '1') {
+            if (gamestatus == 1) {
                 startgame;
                 gamestatus = 0;
                 continue;
@@ -393,18 +387,18 @@ int main() {
             continue;
         }   
         // option 2 display help menu
-        if(gamestatus = '2') {
+        if(gamestatus == 2) {
             helpscreen();
             cin.ignore();
             continue;
         }   
         // option 3 exit game
-        if (gamestatus = '3') {
+        if (gamestatus == 3) {
             cout << "Thanks for playing!(press any key to close window)";
             cin.ignore();                           // ignores the user input
             break;
         }   
-        if (gamestatus = '4') {
+        if (gamestatus == 4) {
             cout << "       [1] = Back to menu         [3] = Exit";
             cin >> gamestatus;
             if (gamestatus != 1 && gamestatus != 3) {
@@ -412,12 +406,11 @@ int main() {
             }
             continue;
         }
-        if (gamestatus != '1', '2' , '3', '4', '5') {
+        if (gamestatus != 0, 1, 2 , 3, 4, 5) {
+            cout << "\n\nerror" << gamestatus << errorcode;
             errorcode = 4;
+            cin.ignore();
         }
-        
-        // used in debugging(pauses the loop before continuing)
-        system("pause");
         
         // called at the end of the function to clear the terminal
         clearscreen();
