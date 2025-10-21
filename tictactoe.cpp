@@ -10,6 +10,7 @@
  * gui with gameboard
  *
  **/
+//Hi, this is Victor!
 
 #include <iostream>             // default c++ library
 #include <string>               // string library for arrays
