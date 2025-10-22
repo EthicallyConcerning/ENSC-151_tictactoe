@@ -162,15 +162,15 @@ void helpscreen() {
  *  
  **/
 void startgame(string &row1, string &row2, string &row3, string &row4, string &row5) {
-    for (int i = 0; i < 5; i++) {
-        row1[i] = 0;                // set all logic values from 0-4 of each row to 0 (blank)
-        row2[i] = 0;
-        row3[i] = 0;
-        row4[i] = 0;
-        row5[i] = 0;
+    for (int i = 1; i <= 5; i++) {
+        row1[i] = 1;                // set all logic values from 0-4 of each row to 0 (blank)
+        row2[i] = 1;
+        row3[i] = 1;
+        row4[i] = 1;
+        row5[i] = 1;
     }
 }
-void errorcodes(float errorcode) {
+void errorcodes(int errorcode) {
     if (errorcode == 0) {
         return;
     }
@@ -201,51 +201,48 @@ void errorcodes(float errorcode) {
  *  row1, row2, row3, row4(update)
  *  
  **/
-void getplayerinput(bool &validinput, int playerturn, float errorcode, string &row1, string &row2, string &row3, string &row4, string &row5) {
-    string playerinput;                             // input of the player given in (letter, number)
+void getplayerinput(bool &invalidinput, int &playerturn, int players, int &errorcode, string playerinput, string &row1, string &row2, string &row3, string &row4, string &row5) {                         // input of the player given in (letter, number)
     int row, col;
-    cout << "Please enter the space to put your token (chessboard coordinates): ";
-    cin >> playerinput;
 
     // check if player input can be processed
     if (playerinput.length() > 2 || playerinput.length() < 2) {
-        validinput = false;
+        invalidinput = true;
         errorcode = 2;
         return;        
     }
 
     // store coordinates 
     // column
-    if (playerinput[0] = 'a') {
+    if (playerinput[0] == 'a') {
         col = 1;
     }
-    if (playerinput[0] = 'b') {
+    if (playerinput[0] == 'b') {
         col = 2;
     }
-    if (playerinput[0] = 'c') {
+    if (playerinput[0] == 'c') {
         col = 3;
     }
-    if (playerinput[0] = 'd') {
+    if (playerinput[0] == 'd') {
         col = 4;
     }
-    if (playerinput[0] = 'e') {
+    if (playerinput[0] == 'e') {
         col = 5;
     }
     // row
-    row = playerinput[1];
+    row = playerinput[1] - 48;
 
-    cout << " \n "<< col << " yes\n\n" << endl;
+    cout << " \n " << col << " " << row << " " << playerinput[1] << endl;
 
     // check for invalid values
     if (col > 5 || col < 1) {
-        validinput = false;
+        invalidinput = false;
         errorcode = 1;
         return;
     }
 
     cout << playerinput[0];
     if (row > 5 || row < 1) {
-        validinput = false;
+        invalidinput = false;
         errorcode = 1;
         return;
     }
@@ -254,38 +251,63 @@ void getplayerinput(bool &validinput, int playerturn, float errorcode, string &r
 
     // store the values in the correct slot
     if (row == 1) {
+        // check if slot is occupied, if it is, return back to the main function
+        if (row1[col] != 0) {
+            errorcode = 3;
+            return;
+        }
+        // provided that the the space is not occupied, the player places their marker on the space.
         if (row1[col] == 0) {
-            row1[col] = 1;
+            row1[col] = playerturn;
         }
     }
     if (row == 2) {
-        if (row1[col] == 0) {
-            row1[col] = 1;
+        if (row2[col] != 0) {
+            errorcode = 3;
+            return;
+        }
+        if (row2[col] == 0) {
+            row2[col] = playerturn;
         }
     }
     if (row == 3) {
-        if (row2[col] == 0) {
-            row2[col] = 1;
+        if (row3[col] != 0) {
+            errorcode = 3;
+            return;
+        }
+        if (row3[col] == 0) {
+            row3[col] = playerturn;
         }
     }
     if (row == 4) {
-        if (row3[col] == 0) {
-            row3[col] = 1;
+        if (row4[col] != 0) {
+            errorcode = 3;
+            return;
+        }
+        if (row4[col] == 0) {
+            row4[col] = playerturn;
         }
     }
     if (row == 5) {
-        if (row4[col] == 0) {
-            row4[col] = 1;
+        if (row5[col] != 0) {
+            errorcode = 3;
+            return;
         }
-    }
-    else {
-        errorcode = 3;
-        return;
+        if (row5[col] == 0) {
+            row5[col] = playerturn;
+        }
     }
 
     // tell the user that the coordinates have been successfully inserted
     cout << "input recieved\n\n\n\n";
+    invalidinput = false;
 
+    // advance the turn counter for player
+    playerturn += 1;
+    // check for overload (can be used to count amount of turns)
+    if (playerturn > players) {
+        playerturn = 1;
+    }
 }
 
 /**
@@ -299,17 +321,14 @@ void getplayerinput(bool &validinput, int playerturn, float errorcode, string &r
  *  
  **/
 void displayboard(string row1,string row2, string row3, string row4, string row5) {
-    cout << row1 << " " << endl;
-    cout << row2 << " " << endl;
-    cout << row3 << " " << endl;
-    cout << row4 << " " << endl;
-    cout << row5 << " " << endl;
-
+    for (int i = 1;i <= 5; i++) {
+        cout << row1[i] << "|" << row2[i] << "|" << row3[i] << "|" << row4[i] << "|" << row5[i] << "|" << endl;
+    }
 
 }
 
 
-/**
+/**s
  *  wincheck()
  *  checks if a player has won the game
  * 
@@ -337,12 +356,13 @@ void wincheck(string row1,string row2, string row3, string row4, string row5, in
 int main() {
     // Game logic variables
     // Logical rows
-    string row1, row2, row3, row4, row5;            // string arrays for storing the player moves
+    string row1, row2, row3, row4, row5 = {0,0,0,0,0,0};            // string arrays for storing the player moves
     int playerturn;                                 // records who's turn it is (0, 1, 2...)
-    bool validinput;                                // bool for input validity
+    int players = 2;                                // potential for more than 2 players;
+    bool invalidinput;                              // bool for input validity
 
     // error code (0 = none, 1 = invalid input, 2 - input incorrect length, 3 - space occupied, 4 = no action selected/invalid action)
-    float errorcode = 0;
+    int errorcode = 0;
     
 
     // Graphics related variables
@@ -365,16 +385,29 @@ int main() {
     int gamestatus = 1;                             // game status (0 = ongoing, 1 = menu/start game, 2 = help menu, 3 = exit, 4 = player win)
 
     while (gamestatus != 3) {
-        
+        clearscreen;
         // game ongoing funcion
         if (gamestatus == 0) {
-            header();
-            displayboard(row1, row2, row3, row4, row5);
-            //cout << linesep;
-            errorcodes(errorcode);
-            getplayerinput(validinput, playerturn, errorcode, row1, row2, row3, row4, row5);
-            //continue;
-            cin.ignore();
+            invalidinput = true;
+            while (invalidinput) {
+                header();
+                displayboard(row1, row2, row3, row4, row5);
+                cout << linesep;
+                if (errorcode != 0) {
+                    errorcodes(errorcode);
+                    errorcode = 0;
+                }
+                cout << "Please enter the space to put your token (chessboard coordinates): ";
+                string playerinput;
+                cin >> playerinput;
+
+                getplayerinput(invalidinput, playerturn, errorcode, players, playerinput, row1, row2, row3, row4, row5);
+            
+            }
+            clearscreen;
+            continue;
+            // pause
+            //cin.ignore();
         }
         // option 1 display menu or start the game
         if (gamestatus == 1) {
@@ -383,6 +416,7 @@ int main() {
             if (gamestatus == 1) {
                 startgame;
                 gamestatus = 0;
+                clearscreen();
                 continue;
             }
             continue;
